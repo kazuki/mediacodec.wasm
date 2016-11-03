@@ -16,7 +16,7 @@ index e146d07..186692c 100644
 -                CFLAGS="-O20 -ffast-math -fsigned-char"
 -                PROFILE="-pg -g -O20 -fsigned-char" 
 +                CFLAGS="-O2 -ffast-math -fsigned-char"
-+                PROFILE="-pg -g -O2 -fsigned-char" 
++                PROFILE="-pg -g -O2 -fsigned-char"
  		;;
  	*-*-darwin*)
  		DEBUG="-fno-common -g -Wall -fsigned-char"
@@ -27,7 +27,7 @@ index e146d07..186692c 100644
 -                CFLAGS="-O20 -fsigned-char"
 -                PROFILE="-O20 -g -pg -fsigned-char" 
 +                CFLAGS="-O2 -fsigned-char"
-+                PROFILE="-O2 -g -pg -fsigned-char" 
++                PROFILE="-O2 -g -pg -fsigned-char"
  		;;
          esac
  fi

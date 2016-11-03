@@ -10,9 +10,9 @@
 [submodule "native/ogg"]
 	path = native/ogg
 	url = https://git.xiph.org/ogg.git
-[submodule "native/openh264"]
-	path = native/openh264
-	url = https://github.com/cisco/openh264.git
 [submodule "native/x264"]
 	path = native/x264
 	url = git://git.videolan.org/x264.git
+[submodule "native/aom"]
+	path = native/aom
+	url = https://aomedia.googlesource.com/aom
