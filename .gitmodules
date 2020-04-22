@@ -4,12 +4,6 @@
 [submodule "native/opus"]
 	path = native/opus
 	url = https://git.xiph.org/opus.git
-[submodule "native/daala"]
-	path = native/daala
-	url = https://git.xiph.org/daala.git
-[submodule "native/ogg"]
-	path = native/ogg
-	url = https://git.xiph.org/ogg.git
 [submodule "native/x264"]
 	path = native/x264
 	url = git://git.videolan.org/x264.git
