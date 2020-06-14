@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Opus.wasm Demo</title>
+    <meta charset="UTF-8" />
+	<script src="audio-demo.js" type="text/javascript"></script>
+    <style type="text/css">
+      *  { font-family:sans-serif }
+      fieldset { display: inline; padding: 1ex; margin-bottom: 1ex; vertical-align: top }
+      fieldset > div { padding: 0 1ex 1ex 1ex; }
+    </style>
+  </head>
+  <body>
+    <h1 style="font-size: 110%">Opus.wasm Encoder/Decoder Demo</h1>
+    <div style="display: flex; flex-wrap: wrap;">
+      <fieldset>
+        <legend>Opus Config</legend>
+        <div>
+          <!--<div>
+            <label for="opus_frame_duration">Frame Duration:</label>
+            <select id="opus_frame_duration">
+              <option value="2.5">2.5 ms</option>
+              <option value="5">5 ms</option>
+              <option value="10">10 ms</option>
+              <option value="20" selected="selected">20 ms</option>
+              <option value="40">40 ms</option>
+              <option value="60">60 ms</option>
+            </select>
+          </div>-->
+          <div>
+            <label for="opus_app">Application:</label>
+            <select id="opus_app">
+              <option value="voip">VoIP</option>
+              <option value="audio" selected="selected">Audio</option>
+              <option value="lowdelay">Restricted Low Delay</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Benchmark</legend>
+        <div>
+          <div>Measures the encoding/decoding speed with the selected wave file</div>
+          <input type="file" id="input_filedata" style="display:block" accept=".wav">
+          <button id="start-benchmark">Start</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Realtime Encode/Decode</legend>
+        <div>
+          <div>Encode/decode the audio(by getUserMedia) in realtime and play it with WebAudio</div>
+          <button id="play">Start (not implemented)</button>
+        </div>
+      </fieldset>
+    </div>
+  </body>
+</html>
