@@ -56,6 +56,9 @@ async function benchmark(file: File, opus_cfg: OpusConfig) {
   const worker = new AsyncWorker(new Worker('audio-demo.worker.js'));
   const pcm_blocks = new Array<Float32Array>();
   const packets = new Array<Uint8Array>();
+  const result = <HTMLDivElement>document.getElementById('benchmark-result');
+  while (result.firstChild)
+    result.removeChild(result.firstChild);
 
   let m = await worker.recv();
   if (m.data.status !== 'ready') {
@@ -77,6 +80,7 @@ async function benchmark(file: File, opus_cfg: OpusConfig) {
   }
 
   let total_samples = 0;
+  const read_start = performance.now();
   while (true) {
     const samples = await reader.read(8192);
     if (samples.length === 0)
@@ -84,6 +88,20 @@ async function benchmark(file: File, opus_cfg: OpusConfig) {
     total_samples += samples.length;
     pcm_blocks.push(new Float32Array(samples));
   }
+  const read_end = performance.now();
+  const duration = total_samples / audio_info.num_of_channels / audio_info.sampling_rate;
+
+  let msg = document.createElement('div');
+  msg.appendChild(document.createTextNode(
+    (audio_info.sampling_rate / 1000).toString() + 'kHz ' +
+      audio_info.num_of_channels.toString() + 'ch ' +
+      duration.toFixed() + 's'));
+  result.appendChild(msg);
+
+  msg = document.createElement('div');
+  msg.appendChild(document.createTextNode(
+    'read:' + (read_end - read_start) + 'ms'));
+  result.appendChild(msg);
 
   const encode_start = performance.now();
   for (let i = 0; i < pcm_blocks.length; ++i) {
@@ -93,9 +111,43 @@ async function benchmark(file: File, opus_cfg: OpusConfig) {
   worker.postMessage({type: 'free'});
   await worker.recv();
   const encode_end = performance.now();
-  console.log('done: ' + packets.length.toString() + ' packets');
-  console.log('encode ' + (encode_end - encode_start) + 'ms, speed: ' +
-              ((total_samples / audio_info.num_of_channels / audio_info.sampling_rate) / ((encode_end - encode_start) / 1000)).toString() + 'x');
+
+  const encode_time = encode_end - encode_start;
+  msg = document.createElement('div');
+  msg.appendChild(document.createTextNode(
+    'encode:' + encode_time.toFixed() + 'ms (' +
+      (duration / (encode_time / 1000)).toFixed() + 'x, ' +
+      packets.length.toString() + ' packets)'));
+  result.appendChild(msg);
+
+  worker.postMessage({
+    type: 'decoder',
+    params: {
+      Fs: audio_info.sampling_rate,
+      channels: audio_info.num_of_channels,
+    }
+  });
+  m = await worker.recv();
+  if (m.data.status !== 'decoder:ok') {
+    alert(m.data);
+    return;
+  }
+
+  const decode_start = performance.now();
+  for (let i = 0; i < packets.length; ++i) {
+    worker.postMessage(packets[i], [packets[i].buffer]);
+    await worker.recv();
+  }
+  worker.postMessage({type: 'free'});
+  await worker.recv();
+  const decode_end = performance.now();
+
+  const decode_time = decode_end - decode_start;
+  msg = document.createElement('div');
+  msg.appendChild(document.createTextNode(
+    'decode:' + decode_time.toFixed() + 'ms (' +
+      (duration / (decode_time / 1000)).toFixed() + 'x)'));
+  result.appendChild(msg);
 }
 
 async function realtime_sample(opus_cfg: OpusConfig) {
