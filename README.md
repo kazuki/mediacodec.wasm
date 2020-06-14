@@ -1,5 +1,7 @@
 # mediacodec.wasm
 
+DEMO: http://kazuki.github.io/mediacodec.wasm/
+
 以下のライブラリのWebAssembly版
 
 * https://github.com/kazuki/opus.js-sample (libopusのasm.js)
