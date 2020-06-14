@@ -18,7 +18,7 @@ async function main() {
     let mode = null;
     let fs;
     let ch;
-    const frame_size = 960;
+    let frame_size = 960;
     let buf_f32;
     let buf_f32_ptr = 0;
     let buf_f32_filled = 0;
@@ -52,11 +52,17 @@ async function main() {
             }, transfers);
         }
         else if (e.data instanceof Uint8Array) {
+            packet.set(e.data);
+            const ret = exports.opus_decode_float(handle, packet_ptr, e.data.length, buf_f32_ptr, frame_size, 0);
+            const tmp = new Float32Array(ret);
+            tmp.set(buf_f32.subarray(0, ret));
+            postMessage(tmp, [tmp.buffer]);
         }
         else {
             if (e.data.type === 'encoder') {
                 fs = e.data.params.Fs;
                 ch = e.data.params.channels;
+                frame_size = 960;
                 handle = exports.opus_encoder_create(fs, ch, e.data.params.application, ptr4);
                 if (!handle) {
                     postMessage({ 'status': 'error' });
@@ -82,6 +88,16 @@ async function main() {
                     return;
                 }
                 mode = 'decoder';
+                frame_size = fs * 60 /* max frame duration[ms] */ / 1000;
+                if (buf_f32_ptr)
+                    exports.free(buf_f32_ptr);
+                buf_f32_ptr = exports.malloc(frame_size * 4 * ch);
+                if (buf_f32_ptr === 0) {
+                    postMessage({ 'status': 'error', 'detail': 'oom' });
+                    return;
+                }
+                buf_f32 = new Float32Array(mem, buf_f32_ptr, frame_size * ch);
+                postMessage({ 'status': 'decoder:ok' });
             }
             else if (e.data.type === 'free') {
                 if (mode === 'encoder') {

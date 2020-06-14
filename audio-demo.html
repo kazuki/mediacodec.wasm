@@ -8,6 +8,8 @@
       *  { font-family:sans-serif }
       fieldset { display: inline; padding: 1ex; margin-bottom: 1ex; vertical-align: top }
       fieldset > div { padding: 0 1ex 1ex 1ex; }
+      .flex-child-space { font-size: 80%; margin-top: 1ex }
+      .flex-child-space > div { margin-right: 0.5ex; }
     </style>
   </head>
   <body>
@@ -43,6 +45,7 @@
           <div>Measures the encoding/decoding speed with the selected wave file</div>
           <input type="file" id="input_filedata" style="display:block" accept=".wav">
           <button id="start-benchmark">Start</button>
+          <div style="display: flex" class="flex-child-space" id="benchmark-result"></div>
         </div>
       </fieldset>
       <fieldset>
