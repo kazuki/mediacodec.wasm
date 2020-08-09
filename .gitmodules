@@ -7,3 +7,6 @@
 [submodule "native/aom"]
 	path = native/aom
 	url = https://aomedia.googlesource.com/aom
+[submodule "native/flac"]
+	path = native/flac
+	url = https://github.com/xiph/flac.git

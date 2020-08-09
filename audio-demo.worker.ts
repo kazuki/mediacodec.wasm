@@ -1,13 +1,17 @@
 async function main() {
+  const table = new WebAssembly.Table({initial: 64, element: 'anyfunc'});  // 28 entries used in wasm
   const wasm = await WebAssembly.instantiateStreaming(fetch('libmediacodec.wasm'), {
     wasi_snapshot_preview1: {
       proc_exit: (status_code) => {},
       fd_close: (fd) => 0,
       fd_seek: (fd, offset_low, offset_high, whence, newOffset) => {},
       fd_write: (fd, iov, iovcnt, p_written) => 0,
+      fd_read: (fd, iov, iovcnt, p_read) => 0,
     },
     env: {
       setTempRet0: () => {},
+      round: (x) => Math.round(x),
+      table: table,
     },
   });
   const mem = (<WebAssembly.Memory><any>wasm.instance.exports.memory).buffer;
